@@ -74,6 +74,7 @@ private:
 			if(clang::isa<clang::FieldDecl>(*it)){
 				const clang::FieldDecl *field_decl =
 					clang::dyn_cast<clang::FieldDecl>(*it);
+				if(field_decl->getTypeSourceInfo() == nullptr){ continue; }
 				TraverseType(field_decl->getType().getTypePtr(), sm, passed_type);
 			}
 		}
@@ -161,7 +162,7 @@ private:
 					subst_type->desugar().getTypePtr(), sm, passed_type);
 			}
 		}else{
-			llvm::errs() << "Unknown type class: " << type->getTypeClassName() << "\n";
+			// llvm::errs() << "Unknown type class: " << type->getTypeClassName() << "\n";
 		}
 	}
 	void TraverseGlobalVariables(
@@ -181,6 +182,7 @@ private:
 	}
 	void TraverseBody(
 		const clang::Stmt *stmt, const clang::SourceManager &sm,
+		llvm::DenseSet<const clang::Decl *> &passed_decl,
 		llvm::DenseSet<const clang::Type *> &passed_type)
 	{
 		if(stmt == nullptr){ return; }
@@ -197,20 +199,32 @@ private:
 						sm, passed_type);
 				}
 			}
+		}else if(clang::isa<clang::CallExpr>(stmt)){
+			const clang::CallExpr *call_expr =
+				clang::dyn_cast<clang::CallExpr>(stmt);
+			TraverseCallGraph(call_expr->getCalleeDecl(), sm, passed_decl, passed_type);
 		}
 		for(auto it = stmt->child_begin(); it != stmt->child_end(); ++it){
-			TraverseBody(*it, sm, passed_type);
+			TraverseBody(*it, sm, passed_decl, passed_type);
 		}
 	}
 	void TraverseCallGraph(
-		clang::Decl *decl, const clang::SourceManager &sm,
+		const clang::Decl *decl, const clang::SourceManager &sm,
 		llvm::DenseSet<const clang::Decl *> &passed_decl,
 		llvm::DenseSet<const clang::Type *> &passed_type,
 		int depth = 0)
 	{
 		if(!passed_decl.insert(decl).second){ return; }
-		if(decl->hasBody()){ TraverseBody(decl->getBody(), sm, passed_type); }
-		if(clang::isa<clang::FunctionDecl>(decl)){
+		if(decl->hasBody()){
+			TraverseBody(decl->getBody(), sm, passed_decl, passed_type);
+		}
+		if(clang::isa<clang::VarDecl>(decl)){
+			const clang::VarDecl *var_decl =
+				clang::dyn_cast<clang::VarDecl>(decl);
+			TraverseBody(
+				var_decl->getAnyInitializer(),
+				sm, passed_decl, passed_type);
+		}else if(clang::isa<clang::FunctionDecl>(decl)){
 			const clang::FunctionDecl *function_decl =
 				clang::dyn_cast<clang::FunctionDecl>(decl);
 			AddKeepingRange(function_decl->getSourceRange(), sm);
@@ -218,6 +232,7 @@ private:
 				function_decl->getReturnType().getTypePtr(),
 				sm, passed_type);
 			for(auto var_decl : function_decl->parameters()){
+				if(var_decl->getTypeSourceInfo() == nullptr){ continue; }
 				TraverseType(
 					var_decl->getTypeSourceInfo()->getType().getTypePtr(),
 					sm, passed_type);
@@ -228,7 +243,7 @@ private:
 			AddKeepingRange(function_decl->getSourceRange(), sm);
 		}
 		clang::CallGraph call_graph;
-		call_graph.addToCallGraph(decl);
+		call_graph.addToCallGraph(const_cast<clang::Decl *>(decl));
 		llvm::ReversePostOrderTraversal<clang::CallGraph *> rpot(&call_graph);
 		for(const auto &node : rpot){
 			clang::Decl *p = node->getDecl();
