@@ -65,7 +65,8 @@ private:
 		m_keeping_ranges.insert(ConvertRange(range, sm));
 	}
 	void TraverseRecordDecl(
-		const clang::RecordDecl *decl, const clang::SourceManager &sm)
+		const clang::RecordDecl *decl, const clang::SourceManager &sm,
+		llvm::DenseSet<const clang::Type *> &passed_type)
 	{
 		const clang::DeclContext *context =
 			clang::dyn_cast<clang::DeclContext>(decl);
@@ -73,13 +74,15 @@ private:
 			if(clang::isa<clang::FieldDecl>(*it)){
 				const clang::FieldDecl *field_decl =
 					clang::dyn_cast<clang::FieldDecl>(*it);
-				TraverseType(field_decl->getType().getTypePtr(), sm);
+				TraverseType(field_decl->getType().getTypePtr(), sm, passed_type);
 			}
 		}
 	}
 	void TraverseType(
-		const clang::Type *type, const clang::SourceManager &sm)
+		const clang::Type *type, const clang::SourceManager &sm,
+		llvm::DenseSet<const clang::Type *> &passed_type)
 	{
+		if(!passed_type.insert(type).second){ return; }
 		if(clang::isa<clang::BuiltinType>(type)){
 			// nothing to do
 		}else if(clang::isa<clang::AutoType>(type)){
@@ -87,59 +90,83 @@ private:
 		}else if(clang::isa<clang::PointerType>(type)){
 			const clang::PointerType *pointer_type =
 				clang::dyn_cast<clang::PointerType>(type);
-			TraverseType(pointer_type->getPointeeType().getTypePtr(), sm);
+			TraverseType(
+				pointer_type->getPointeeType().getTypePtr(),
+				sm, passed_type);
 		}else if(clang::isa<clang::ReferenceType>(type)){
 			const clang::ReferenceType *reference_type =
 				clang::dyn_cast<clang::ReferenceType>(type);
-			TraverseType(reference_type->getPointeeType().getTypePtr(), sm);
+			TraverseType(
+				reference_type->getPointeeType().getTypePtr(),
+				sm, passed_type);
 		}else if(clang::isa<clang::ArrayType>(type)){
 			const clang::ArrayType *array_type =
 				clang::dyn_cast<clang::ArrayType>(type);
-			TraverseType(array_type->getElementType().getTypePtr(), sm);
+			TraverseType(
+				array_type->getElementType().getTypePtr(),
+				sm, passed_type);
 		}else if(clang::isa<clang::TypedefType>(type)){
 			const clang::TypedefType *typedef_type =
 				clang::dyn_cast<clang::TypedefType>(type);
 			const clang::TypeSourceInfo *tsinfo =
 				typedef_type->getDecl()->getTypeSourceInfo();
 			AddKeepingRange(tsinfo->getTypeLoc().getSourceRange(), sm);
-			TraverseType(typedef_type->desugar().getTypePtr(), sm);
+			TraverseType(
+				typedef_type->desugar().getTypePtr(),
+				sm, passed_type);
 		}else if(clang::isa<clang::EnumType>(type)){
 			// TODO
 		}else if(clang::isa<clang::RecordType>(type)){
 			const clang::RecordType *record_type =
 				clang::dyn_cast<clang::RecordType>(type);
 			AddKeepingRange(record_type->getDecl()->getSourceRange(), sm);
-			TraverseRecordDecl(record_type->getDecl(), sm);
+			TraverseRecordDecl(record_type->getDecl(), sm, passed_type);
+			if(clang::isa<clang::CXXRecordDecl>(record_type->getDecl())){
+				const clang::CXXRecordDecl *record_decl =
+					clang::dyn_cast<clang::CXXRecordDecl>(record_type->getDecl());
+				if(record_decl->isCompleteDefinition()){
+					for(const auto &base : record_decl->bases()){
+						const clang::Type *base_type = base.getType().getTypePtr();
+						TraverseType(base_type, sm, passed_type);
+					}
+				}
+			}
 		}else if(clang::isa<clang::FunctionType>(type)){
 			// TODO
 		}else if(clang::isa<clang::ElaboratedType>(type)){
 			const clang::ElaboratedType *elaborated_type =
 				clang::dyn_cast<clang::ElaboratedType>(type);
 			if(elaborated_type->isSugared()){
-				TraverseType(elaborated_type->desugar().getTypePtr(), sm);
+				TraverseType(
+					elaborated_type->desugar().getTypePtr(),
+					sm, passed_type);
 			}
 		}else if(clang::isa<clang::TemplateSpecializationType>(type)){
 			const clang::TemplateSpecializationType *specialization_type =
 				clang::dyn_cast<clang::TemplateSpecializationType>(type);
 			if(specialization_type->isSugared()){
-				TraverseType(specialization_type->desugar().getTypePtr(), sm);
+				TraverseType(
+					specialization_type->desugar().getTypePtr(),
+					sm, passed_type);
 			}
 			for(auto it : *specialization_type){
 				if(it.getKind() != clang::TemplateArgument::Type){ continue; }
-				TraverseType(it.getAsType().getTypePtr(), sm);
+				TraverseType(it.getAsType().getTypePtr(), sm, passed_type);
 			}
 		}else if(clang::isa<clang::SubstTemplateTypeParmType>(type)){
 			const clang::SubstTemplateTypeParmType *subst_type =
 				clang::dyn_cast<clang::SubstTemplateTypeParmType>(type);
 			if(subst_type->isSugared()){
-				TraverseType(subst_type->desugar().getTypePtr(), sm);
+				TraverseType(
+					subst_type->desugar().getTypePtr(), sm, passed_type);
 			}
 		}else{
 			llvm::errs() << "Unknown type class: " << type->getTypeClassName() << "\n";
 		}
 	}
 	void TraverseGlobalVariables(
-		const clang::TranslationUnitDecl *tu, const clang::SourceManager &sm)
+		const clang::TranslationUnitDecl *tu, const clang::SourceManager &sm,
+		llvm::DenseSet<const clang::Type *> &passed_type)
 	{
 		for(auto it = tu->decls_begin(); it != tu->decls_end(); ++it){
 			const clang::Decl *decl = *it;
@@ -147,12 +174,14 @@ private:
 				const clang::VarDecl *var_decl =
 					clang::dyn_cast<clang::VarDecl>(decl);
 				TraverseType(
-					var_decl->getTypeSourceInfo()->getType().getTypePtr(), sm);
+					var_decl->getTypeSourceInfo()->getType().getTypePtr(),
+					sm, passed_type);
 			}
 		}
 	}
 	void TraverseBody(
-		const clang::Stmt *stmt, const clang::SourceManager &sm)
+		const clang::Stmt *stmt, const clang::SourceManager &sm,
+		llvm::DenseSet<const clang::Type *> &passed_type)
 	{
 		if(stmt == nullptr){ return; }
 		if(clang::isa<clang::DeclStmt>(stmt)){
@@ -164,28 +193,34 @@ private:
 					const clang::VarDecl *var_decl =
 						clang::dyn_cast<clang::VarDecl>(decl);
 					TraverseType(
-						var_decl->getTypeSourceInfo()->getType().getTypePtr(), sm);
+						var_decl->getTypeSourceInfo()->getType().getTypePtr(),
+						sm, passed_type);
 				}
 			}
 		}
 		for(auto it = stmt->child_begin(); it != stmt->child_end(); ++it){
-			TraverseBody(*it, sm);
+			TraverseBody(*it, sm, passed_type);
 		}
 	}
 	void TraverseCallGraph(
 		clang::Decl *decl, const clang::SourceManager &sm,
-		llvm::DenseSet<const clang::Decl *> &passed, int depth = 0)
+		llvm::DenseSet<const clang::Decl *> &passed_decl,
+		llvm::DenseSet<const clang::Type *> &passed_type,
+		int depth = 0)
 	{
-		if(!passed.insert(decl).second){ return; }
-		if(decl->hasBody()){ TraverseBody(decl->getBody(), sm); }
+		if(!passed_decl.insert(decl).second){ return; }
+		if(decl->hasBody()){ TraverseBody(decl->getBody(), sm, passed_type); }
 		if(clang::isa<clang::FunctionDecl>(decl)){
 			const clang::FunctionDecl *function_decl =
 				clang::dyn_cast<clang::FunctionDecl>(decl);
 			AddKeepingRange(function_decl->getSourceRange(), sm);
-			TraverseType(function_decl->getReturnType().getTypePtr(), sm);
+			TraverseType(
+				function_decl->getReturnType().getTypePtr(),
+				sm, passed_type);
 			for(auto var_decl : function_decl->parameters()){
 				TraverseType(
-					var_decl->getTypeSourceInfo()->getType().getTypePtr(), sm);
+					var_decl->getTypeSourceInfo()->getType().getTypePtr(),
+					sm, passed_type);
 			}
 		}else if(clang::isa<clang::FunctionTemplateDecl>(decl)){
 			const clang::FunctionTemplateDecl *function_decl =
@@ -198,7 +233,7 @@ private:
 		for(const auto &node : rpot){
 			clang::Decl *p = node->getDecl();
 			if(p == nullptr){ continue; }
-			TraverseCallGraph(p, sm, passed, depth + 1);
+			TraverseCallGraph(p, sm, passed_decl, passed_type, depth + 1);
 		}
 	}
 	void TraverseASTBody(
@@ -293,16 +328,17 @@ public:
 		m_removing_ranges.clear();
 		const clang::SourceManager &sm = context.getSourceManager();
 		clang::TranslationUnitDecl *tu = context.getTranslationUnitDecl();
-		TraverseGlobalVariables(tu, sm);
-		llvm::DenseSet<const clang::Decl *> passed;
+		llvm::DenseSet<const clang::Type *> type_passed;
+		TraverseGlobalVariables(tu, sm, type_passed);
+		llvm::DenseSet<const clang::Decl *> decl_passed;
 		for(auto it = tu->decls_begin(); it != tu->decls_end(); ++it){
 			if(clang::isa<clang::VarDecl>(*it)){
-				TraverseCallGraph(*it, sm, passed);
+				TraverseCallGraph(*it, sm, decl_passed, type_passed);
 			}else if(clang::isa<clang::FunctionDecl>(*it)){
 				clang::FunctionDecl *function_decl =
 					clang::dyn_cast<clang::FunctionDecl>(*it);
 				if(function_decl->getNameInfo().getAsString() == "main"){
-					TraverseCallGraph(*it, sm, passed);
+					TraverseCallGraph(*it, sm, decl_passed, type_passed);
 				}
 			}
 		}

@@ -65,6 +65,7 @@ public:
 	}
 	const std::string &operator[](int i) const { return m_lines[i - 1]; }
 	bool is_removed(int i) const { return m_removal_flags[i] != 0; }
+	void remove(int i){ m_removal_flags[i] = 1; }
 };
 
 class MinifyAction : public clang::PreprocessorFrontendAction {
@@ -109,6 +110,7 @@ public:
 				if(skip_flag == 0 && !loaded_files[cur_file].is_removed(cur_line)){
 					const auto it = loaded_files.find(cur_file);
 					if(it != loaded_files.end()){
+						it->second.remove(cur_line);
 						output_buffer.push_back(it->second[cur_line]);
 					}
 				}
@@ -116,6 +118,7 @@ public:
 				if(skip_flag == 0 && !loaded_files[cur_file].is_removed(cur_line)){
 					const auto it = loaded_files.find(cur_file);
 					if(it != loaded_files.end()){
+						it->second.remove(cur_line);
 						output_buffer.push_back(it->second[cur_line]);
 					}
 				}
