@@ -58,9 +58,16 @@ public:
 			++m_removal_flags[it->first];
 			--m_removal_flags[it->second+ 1];
 		}
+		const std::string remove_pattern("[[MINIFIER_REMOVE]]");
 		for(int i = 0, s = 0; i <= n; ++i){
 			s += m_removal_flags[i];
 			m_removal_flags[i] = s;
+			if(i == 0 || i - 1 >= m_lines.size()){ continue; }
+			const size_t p = m_lines[i - 1].rfind(remove_pattern);
+			if(p == std::string::npos){ continue; }
+			if(p == m_lines[i - 1].size() - remove_pattern.size()){
+				m_removal_flags[i] = 1;
+			}
 		}
 	}
 	const std::string &operator[](int i) const { return m_lines[i - 1]; }
