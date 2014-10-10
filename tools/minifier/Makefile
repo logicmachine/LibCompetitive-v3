@@ -41,7 +41,7 @@ CFLAGS = --cxxflags
 
 all:$(MAIN_OBJ) $(ANALYZER_OBJ) $(MINIFIER_OBJ)
 	mkdir -p $(BIN_DIR)
-	$(CC) -g $(MAIN_OBJ) $(ANALYZER_OBJ) $(MINIFIER_OBJ) $(LIBS) `$(CONFIG) $(LFLAGS)` -static -ltinfo -lncurses -lstdc++ -lpthread -lm -ldl -lz -o $(TOOL) 
+	$(CC) -g $(MAIN_OBJ) $(ANALYZER_OBJ) $(MINIFIER_OBJ) $(LIBS) `$(CONFIG) $(LFLAGS)` -static -ltinfo -lncurses -lstdc++ -lpthread -lm -ldl -lz -o $(TOOL)
 
 $(MAIN_OBJ):$(MAIN_SRC)
 	$(CC) -g $(MAIN_SRC) `$(CONFIG) $(CFLAGS)` -fno-rtti -c -o $(MAIN_OBJ) 
