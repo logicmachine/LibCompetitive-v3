@@ -3,3 +3,8 @@
  *  @defgroup geometry Geometry
  */
 
+/**
+ *  @defgroup geometry_primitives Primitives
+ *  @ingroup  geometry
+ */
+
