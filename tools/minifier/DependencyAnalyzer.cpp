@@ -224,10 +224,7 @@ private:
 		if(enabled && clang::isa<clang::RecordDecl>(decl)){
 			const auto ctx = clang::dyn_cast<clang::DeclContext>(decl);
 			for(const auto &child : ctx->decls()){
-				if(clang::isa<clang::VarDecl>(child)){
-					TraverseDecl(child, sm, depth + 1);
-				}
-				if(clang::isa<clang::FieldDecl>(child)){
+				if(!clang::isa<clang::FunctionDecl>(child)){
 					TraverseDecl(child, sm, depth + 1);
 				}
 			}
