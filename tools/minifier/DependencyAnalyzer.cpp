@@ -243,7 +243,7 @@ private:
 			DeclarationRange dr = MakeRange(decl->getSourceRange(), sm);
 			if(m_keep_ranges.find(dr) != m_keep_ranges.end()){
 				enabled = true;
-			}else{
+			}else if(!decl->isImplicit()){
 				m_remove_ranges.insert(dr);
 			}
 		}
@@ -252,6 +252,8 @@ llvm::errs() << std::string(depth * 2, ' ');
 if(clang::isa<clang::NamedDecl>(decl)){ llvm::errs() << *clang::dyn_cast<clang::NamedDecl>(decl); }
 llvm::errs() << " (" << decl->getDeclKindName() << ")";
 if(enabled){ llvm::errs() << " [enabled]"; }
+DeclarationRange dr = MakeRange(decl->getSourceRange(), sm);
+llvm::errs() << " " << dr.getFirstLine() << ":" << dr.getLastLine();
 llvm::errs() << "\n";
 */
 		if(!enabled){ return false; }
