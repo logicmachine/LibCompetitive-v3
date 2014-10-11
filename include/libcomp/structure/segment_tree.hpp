@@ -1,5 +1,5 @@
 /**
- *  @file structure/segment_tree.h
+ *  @file libcomp/structure/segment_tree.h
  */
 #pragma once
 #include <vector>
@@ -50,7 +50,7 @@ public:
 	 *  @brief コンストラクタ (既定値で初期化)
 	 *
 	 *  葉をすべて既定値で初期化した状態のセグメント木を構築する。
-	 *  計算量は \f$ \mathcal{O}(n) \f$。
+	 *    - 時間計算量: \f$ \mathcal{O}(n) \f$
 	 *
 	 *  @param[in] size    最低限必要な葉の数
 	 *  @param[in] traits  処理内容を示す関数オブジェクト
@@ -67,7 +67,7 @@ public:
 	 *  @brief コンストラクタ (要素列による初期化)
 	 *
 	 *  葉をすべて [first, last) で初期化した状態のセグメント木を構築する。
-	 *  計算量は \f$ \mathcal{O}(n) (n = distance(first, last)) \f$。
+	 *    - 時間計算量: \f$ \mathcal{O}(n) \f$。
 	 *
 	 *  @param[in] first   要素列の先頭を指すイテレータ
 	 *  @param[in] last    要素列の終端を指すイテレータ
@@ -89,7 +89,7 @@ public:
 	 *  @brief 葉の更新
 	 *
 	 *  i番目の葉の値をvalで更新する。また、必要に応じて節点の値も更新する。
-	 *  計算量は \f$ \mathcal{O}(\log{n}) \f$。
+	 *    - 時間計算量: \f$ \mathcal{O}(\log{n}) \f$
 	 *
 	 *  @param[in] i    更新したい葉のインデックス
 	 *  @param[in] val  更新後の値
@@ -107,7 +107,7 @@ public:
 	 *  @brief 区間についての問い合わせ
 	 *
 	 *  インデックスが区間 [a, b) に含まれる要素すべてを結合した結果を求める。
-	 *  計算量は \f$ \mathcal{O}(\log{n}) \f$。
+	 *    - 時間計算量: \f$ \mathcal{O}(\log{n}) \f$
 	 *
 	 *  @param[in] a  区間の始端
 	 *  @param[in] b  区間の終端
@@ -121,7 +121,7 @@ public:
 	 *  @brief 葉の取得
 	 *
 	 *  i番目の葉の値を取得する。
-	 *  計算量は \f$ \mathcal{O}(1) \f$。
+	 *    - 時間計算量: \f$ \mathcal{O}(1) \f$
 	 *
 	 *  @param[in] i  取得する葉のインデックス
 	 *  @return    取得された値
