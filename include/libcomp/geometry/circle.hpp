@@ -2,7 +2,7 @@
  *  @file libcomp/geometry/circle.h
  */
 #pragma once
-#include "libcomp/geometry/point.h"
+#include "libcomp/geometry/point.hpp"
 
 namespace lc {
 
@@ -35,7 +35,7 @@ struct Circle {
 	 *  @return 不正な円
 	 */
 	static Circle invalid(){
-		double qnan = numeric_limits<double>::quiet_NaN();
+		double qnan = std::numeric_limits<double>::quiet_NaN();
 		return Circle(Point::invalid(), qnan);
 	}
 	/**

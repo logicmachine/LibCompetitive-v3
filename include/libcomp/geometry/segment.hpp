@@ -2,8 +2,8 @@
  *  @file libcomp/geometry/segment.h
  */
 #pragma once
-#include "libcomp/geometry/point.h"
-#include "libcomp/geometry/line.h"
+#include "libcomp/geometry/point.hpp"
+#include "libcomp/geometry/line.hpp"
 
 namespace lc {
 

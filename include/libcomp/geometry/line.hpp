@@ -2,7 +2,7 @@
  *  @file libcomp/geometry/line.h
  */
 #pragma once
-#include "libcomp/geometry/point.h"
+#include "libcomp/geometry/point.hpp"
 
 namespace lc {
 
