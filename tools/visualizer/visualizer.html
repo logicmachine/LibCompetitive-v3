@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript">
+function Point(x, y){
+}
+function Line(x1, y1, x2, y2){
+}
+function Segment(x1, y2, x2, y2){
+	canvas.beginPath();
+	canvas.moveTo(x1, y1);
+	canvas.lineTo(x2, y2);
+	canvas.stroke();
+}
+function Circle(x, y, r){
+	canvas.beginPath();
+	canvas.arc(x, y, r, 0, 2.0 * Math.PI, 0);
+	canvas.stroke();
+}
+function Arc(x, y, r, a, b){
+	canvas.beginPath();
+	canvas.arc(x, y, r, a, b, 0);
+	canvas.stroke();
+}
+window.onload = function(){
+	canvas = document.getElementById('c').getContext('2d');
+	document.getElementById('s').src = 'data.js?';
+};
+</script>
+</head>
+<body>
+<canvas id="c" width="800" height="800" style="border:1px solid #000;"></canvas>
+<script id="s"></script>
+</body>
+</html>
+
