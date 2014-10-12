@@ -195,7 +195,7 @@ inline bool intersect(const Circle &a, const Segment &b){
  */
 inline bool intersect(const Circle &a, const Circle &b){
 	const double d = (a.c - b.c).abs();
-	return (a.r - d <= b.r) && (a.r + d >= b.r);
+	return d <= a.r + b.r && a.r + d >= b.r && b.r + d >= a.r;
 }
 
 /**
