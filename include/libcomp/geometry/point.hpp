@@ -153,6 +153,11 @@ struct Point {
 	 *  @return *this と直交するベクトル
 	 */
 	Point ortho() const { return Point(-y, x); }
+	/**
+	 *  @brief 偏角の計算
+	 *  @return ベクトル *this の偏角
+	 */
+	double arg() const { return atan2(y, x); }
 };
 
 /**
