@@ -15,8 +15,7 @@ namespace lc {
  */
 
 /**
- *  @brief 遅延更新セグメント木
- *  @sa SumLazySegmentTreeTraits
+ *  @brief  遅延更新セグメント木
  *  @tparam Traits  セグメント木の動作を示す型
  */
 template <typename Traits>
@@ -30,13 +29,13 @@ public:
 
 private:
 	Traits m_traits;
-	vector<value_type> m_values;
-	vector<modifier_type> m_modifiers;
 	size_t m_size;
+	std::vector<value_type> m_values;
+	std::vector<modifier_type> m_modifiers;
 
 	void initialize(){
 		for(int i = static_cast<int>(m_size) - 2; i >= 0; --i){
-			m_values[i] = m_traits.merge_value(
+			m_values[i] = m_traits(
 				m_values[i * 2 + 1], m_values[i * 2 + 2]);
 		}
 	}
@@ -45,38 +44,39 @@ private:
 		int a, int b, int k, int l, int r, const modifier_type &modifier)
 	{
 		if(r <= a || b <= l){
-			return m_traits.resolve(l, r, m_values[k], m_modifiers[k]);
+			return m_traits.resolve(r - l, m_values[k], m_modifiers[k]);
 		}
 		if(a <= l && r <= b){
 			m_modifiers[k] =
 				m_traits.merge_modifier(m_modifiers[k], modifier);
-			return m_traits.resolve(l, r, m_values[k], m_modifiers[k]);
+			return m_traits.resolve(r - l, m_values[k], m_modifiers[k]);
 		}
-		const modifier_type prev = m_modifiers[k];
-		m_modifiers[k] = m_traits.default_modifier();
 		const int c = (l + r) / 2, lk = k * 2 + 1, rk = k * 2 + 2;
-		m_modifiers[lk] = m_traits.merge_modifier(prev, m_modifiers[lk]);
-		m_modifiers[rk] = m_traits.merge_modifier(prev, m_modifiers[rk]);
-		const value_type vl = modify(a, b, lk, l, c, modifier);
-		const value_type vr = modify(a, b, rk, c, r, modifier);
-		m_values[k] = m_traits.merge_value(vl, vr);
+		const auto p = m_traits.split_modifier(m_modifiers[k], r - l);
+		m_modifiers[k] = m_traits.default_modifier();
+		modify(l, c, lk, l, c, p.first);
+		modify(c, r, rk, c, r, p.second);
+		const auto q = m_traits.split_modifier(modifier, c - std::max(a, l));
+		const value_type vl = modify(a, b, lk, l, c, q.first);
+		const value_type vr = modify(a, b, rk, c, r, q.second);
+		m_values[k] = m_traits(vl, vr);
 		return m_values[k];
 	}
 
 	value_type query(int a, int b, int k, int l, int r){
 		if(r <= a || b <= l){ return m_traits.default_value(); }
 		if(a <= l && r <= b){
-			return m_traits.resolve(l, r, m_values[k], m_modifiers[k]);
+			return m_traits.resolve(r - l, m_values[k], m_modifiers[k]);
 		}
-		const modifier_type modifier = m_modifiers[k];
-		m_values[k] = m_traits.resolve(l, r, m_values[k], modifier);
-		m_modifiers[k] = m_traits.default_modifier();
 		const int c = (l + r) / 2, lk = k * 2 + 1, rk = k * 2 + 2;
-		m_modifiers[lk] = m_traits.merge_modifier(m_modifiers[lk], modifier);
-		m_modifiers[rk] = m_traits.merge_modifier(m_modifiers[rk], modifier);
+		const auto p = m_traits.split_modifier(m_modifiers[k], c - l);
+		m_values[k] = m_traits.resolve(r - l, m_values[k], m_modifiers[k]);
+		m_modifiers[k] = m_traits.default_modifier();
+		modify(l, c, lk, l, c, p.first);
+		modify(c, r, rk, c, r, p.second);
 		const value_type vl = query(a, b, lk, l, c);
 		const value_type vr = query(a, b, rk, c, r);
-		return m_traits.merge_value(vl, vr);
+		return m_traits(vl, vr);
 	}
 
 public:
@@ -90,8 +90,11 @@ public:
 	 *  @param[in] traits  処理内容を示すオブジェクト
 	 */
 	explicit LazySegmentTree(
-		size_t size = 0, const Traits &traits = Traits()) :
-		m_size(1), m_traits(traits)
+		size_t size = 0, const Traits &traits = Traits())
+		: m_traits(traits)
+		, m_size(1)
+		, m_values()
+		, m_modifiers()
 	{
 		while(m_size < size){ m_size *= 2; }
 		m_values.resize(m_size * 2 - 1, m_traits.default_value());
@@ -111,8 +114,11 @@ public:
 	 */
 	template <typename Iterator>
 	LazySegmentTree(
-		Iterator first, Iterator last, const Traits &traits = Traits()) :
-		m_size(1), m_traits(traits)
+		Iterator first, Iterator last, const Traits &traits = Traits())
+		: m_traits(traits)
+		, m_size(1)
+		, m_values()
+		, m_modifiers()
 	{
 		const size_t n = distance(first, last);
 		while(m_size < n){ m_size *= 2; }
