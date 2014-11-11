@@ -11,7 +11,7 @@
 #include "DependencyAnalyzer.hpp"
 #include <unordered_set>
 
-// #define DEBUG_TREE
+#define DEBUG_TREE
 
 class DeclarationRange {
 private:
@@ -239,6 +239,9 @@ private:
 				const auto record_decl =
 					clang::dyn_cast<clang::CXXRecordDecl>(decl);
 				TraverseDecl(record_decl->getDestructor(), sm, depth + 1);
+				for(const auto &ctor : record_decl->ctors()){
+					TraverseDecl(ctor, sm, depth + 1);
+				}
 			}
 		}
 		if(enabled && clang::isa<clang::RecordDecl>(decl)){
