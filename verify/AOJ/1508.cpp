@@ -1,14 +1,15 @@
 #include <cstdio>
 #include <vector>
 #include <algorithm>
-#include "libcomp/structure/treap_list/min.hpp"
+#include "libcomp/structure/traits/min.hpp"
+#include "libcomp/structure/treap_list.hpp"
 
 using namespace std;
 
 int main(){
 	int n, q;
 	scanf("%d%d", &n, &q);
-	lc::TreapList<lc::MinTreapListTraits<int>> b;
+	lc::TreapList<lc::MinTraits<int>> b;
 	for(int i = 0; i < n; ++i){
 		int ai;
 		scanf("%d", &ai);
@@ -18,9 +19,9 @@ int main(){
 		int x, y, z;
 		scanf("%d%d%d", &x, &y, &z);
 		if(x == 0){
-			lc::TreapList<lc::MinTreapListTraits<int>> c = b.split(y);
-			lc::TreapList<lc::MinTreapListTraits<int>> d = c.split(z - y);
-			lc::TreapList<lc::MinTreapListTraits<int>> e = d.split(1);
+			lc::TreapList<lc::MinTraits<int>> c = b.split(y);
+			lc::TreapList<lc::MinTraits<int>> d = c.split(z - y);
+			lc::TreapList<lc::MinTraits<int>> e = d.split(1);
 			b.merge(std::move(d));
 			b.merge(std::move(c));
 			b.merge(std::move(e));

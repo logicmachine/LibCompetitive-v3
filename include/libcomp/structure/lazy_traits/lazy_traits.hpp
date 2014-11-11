@@ -1,5 +1,5 @@
 /**
- *  @file libcomp/structure/lazy_traits.hpp
+ *  @file libcomp/structure/lazy_traits/lazy_traits.hpp
  */
 
 /**
