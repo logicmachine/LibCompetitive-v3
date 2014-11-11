@@ -11,7 +11,7 @@
 #include "DependencyAnalyzer.hpp"
 #include <unordered_set>
 
-#define DEBUG_TREE
+// #define DEBUG_TREE
 
 class DeclarationRange {
 private:
