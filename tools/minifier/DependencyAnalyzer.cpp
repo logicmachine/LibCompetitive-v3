@@ -11,6 +11,8 @@
 #include "DependencyAnalyzer.hpp"
 #include <unordered_set>
 
+// #define DEBUG_TREE
+
 class DeclarationRange {
 private:
 	std::string m_source_file;
@@ -67,6 +69,13 @@ private:
 	{
 		if(decl == nullptr){ return; }
 		if(!m_traversed_decls.insert(decl).second){ return; }
+#ifdef DEBUG_TREE
+		llvm::errs() << std::string(depth * 2, ' ');
+		if(clang::isa<clang::NamedDecl>(decl)){
+			llvm::errs() << *clang::dyn_cast<clang::NamedDecl>(decl) << " ";
+		}
+		llvm::errs() << "(" << decl->getDeclKindName() << ")\n";
+#endif
 		m_marked_decls.insert(decl);
 		if(clang::isa<clang::CXXConstructorDecl>(decl)){
 			const auto ctor_decl = clang::dyn_cast<clang::CXXConstructorDecl>(decl);
@@ -107,6 +116,10 @@ private:
 	{
 		if(stmt == nullptr){ return; }
 		if(!m_traversed_stmts.insert(stmt).second){ return; }
+#ifdef DEBUG_TREE
+		llvm::errs() << std::string(depth * 2, ' ');
+		llvm::errs() << stmt->getStmtClassName() << "\n";
+#endif
 		if(clang::isa<clang::CallExpr>(stmt)){
 			const auto call_expr = clang::dyn_cast<clang::CallExpr>(stmt);
 			TraverseDecl(call_expr->getCalleeDecl(), sm, depth + 1);
@@ -193,6 +206,13 @@ private:
 		const clang::Decl *decl, const clang::SourceManager &sm, int depth = 0)
 	{
 		if(decl == nullptr){ return false; }
+#ifdef DEBUG_TREE
+		llvm::errs() << std::string(depth * 2, ' ');
+		if(clang::isa<clang::NamedDecl>(decl)){
+			llvm::errs() << *clang::dyn_cast<clang::NamedDecl>(decl) << " ";
+		}
+		llvm::errs() << "(" << decl->getDeclKindName() << ")\n";
+#endif
 		bool enabled = (m_marked_decls.find(decl) != m_marked_decls.end());
 		if(clang::isa<clang::DeclContext>(decl)){
 			const auto ctx = clang::dyn_cast<clang::DeclContext>(decl);
@@ -244,15 +264,6 @@ private:
 				m_remove_ranges.insert(dr);
 			}
 		}
-/*
-llvm::errs() << std::string(depth * 2, ' ');
-if(clang::isa<clang::NamedDecl>(decl)){ llvm::errs() << *clang::dyn_cast<clang::NamedDecl>(decl); }
-llvm::errs() << " (" << decl->getDeclKindName() << ")";
-if(enabled){ llvm::errs() << " [enabled]"; }
-DeclarationRange dr = MakeRange(decl->getSourceRange(), sm);
-llvm::errs() << " " << dr.getFirstLine() << ":" << dr.getLastLine();
-llvm::errs() << "\n";
-*/
 		if(!enabled){ return false; }
 		if(clang::isa<clang::DeclContext>(decl)){
 			const auto ctx = clang::dyn_cast<clang::DeclContext>(decl);
@@ -265,6 +276,18 @@ llvm::errs() << "\n";
 			for(const auto &child : ctx->decls()){
 				if(clang::isa<clang::VarDecl>(child)){ TraverseDecl(child, sm); }
 				if(clang::isa<clang::FieldDecl>(child)){ TraverseDecl(child, sm); }
+			}
+		}
+		if(clang::isa<clang::ClassTemplateDecl>(decl)){
+			const auto ctdecl = clang::dyn_cast<clang::ClassTemplateDecl>(decl);
+			for(const auto &spec : ctdecl->specializations()){
+				RemoveDecl(spec, sm, depth + 1);
+			}
+		}
+		if(clang::isa<clang::FunctionTemplateDecl>(decl)){
+			const auto ftdecl = clang::dyn_cast<clang::FunctionTemplateDecl>(decl);
+			for(const auto &spec : ftdecl->specializations()){
+				RemoveDecl(spec, sm, depth + 1);
 			}
 		}
 		return true;
@@ -290,7 +313,7 @@ public:
 			}else if(clang::isa<clang::FunctionDecl>(decl)){
 				const auto *function_decl =
 					clang::dyn_cast<clang::FunctionDecl>(decl);
-				if(function_decl->getNameInfo().getAsString() == "main"){
+				if(function_decl->isMain()){
 					TraverseDecl(decl, sm);
 				}
 			}
