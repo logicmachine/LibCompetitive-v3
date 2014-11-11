@@ -51,8 +51,8 @@ private:
 		node->cache    = p->cache;
 		node->priority = p->priority;
 		node->size     = p->size;
-		node->children[0] = clone(p->children[0], node);
-		node->children[1] = clone(p->children[1], node);
+		node->children[0] = clone(p->children[0]);
+		node->children[1] = clone(p->children[1]);
 		return node;
 	}
 	void destroy(node_type *p) const {
