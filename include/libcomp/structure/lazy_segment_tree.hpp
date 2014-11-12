@@ -52,11 +52,13 @@ private:
 			return m_traits.resolve(r - l, m_values[k], m_modifiers[k]);
 		}
 		const int c = (l + r) / 2, lk = k * 2 + 1, rk = k * 2 + 2;
-		const auto p = m_traits.split_modifier(m_modifiers[k], r - l);
+		const auto p = m_traits.split_modifier(m_modifiers[k], c - l);
 		m_modifiers[k] = m_traits.default_modifier();
 		modify(l, c, lk, l, c, p.first);
 		modify(c, r, rk, c, r, p.second);
-		const auto q = m_traits.split_modifier(modifier, c - std::max(a, l));
+		const auto q = (a < c) ?
+			m_traits.split_modifier(modifier, c - std::max(a, l)) :
+			std::make_pair(m_traits.default_modifier(), modifier);
 		const value_type vl = modify(a, b, lk, l, c, q.first);
 		const value_type vr = modify(a, b, rk, c, r, q.second);
 		m_values[k] = m_traits(vl, vr);
