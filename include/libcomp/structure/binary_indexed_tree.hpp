@@ -9,6 +9,7 @@ namespace lc {
 
 /**
  *  @defgroup binary_indexed_tree Binary indexed tree
+ *  @brief    Binary Indexed Tree / Fenwick木
  *  @ingroup  structure
  *  @{
  */

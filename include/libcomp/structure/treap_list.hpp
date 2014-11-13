@@ -8,7 +8,8 @@
 namespace lc {
 
 /**
- *  @defgroup treap_list List (based on Treap)
+ *  @defgroup treap_list List (treap)
+ *  @brief    Treap によるリストの実装
  *  @ingroup  structure
  *  @{
  */

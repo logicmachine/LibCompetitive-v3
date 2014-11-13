@@ -8,6 +8,7 @@ namespace lc {
 
 /**
  *  @defgroup eratosthenes Eratosthenes
+ *  @brief    エラトステネスの篩
  *  @ingroup  math
  *  @{
  */

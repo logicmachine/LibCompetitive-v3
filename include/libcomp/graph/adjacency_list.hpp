@@ -7,7 +7,8 @@
 namespace lc {
 
 /**
- *  @defgroup adjacency_list Adjacency List
+ *  @defgroup adjacency_list Adjacency list
+ *  @brief    グラフの隣接リスト表現
  *  @ingroup  graph
  *  @{
  */

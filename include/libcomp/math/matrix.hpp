@@ -10,6 +10,7 @@ namespace lc {
 
 /**
  *  @defgroup matrix Matrix
+ *  @brief    行列
  *  @ingroup  math
  *  @{
  */

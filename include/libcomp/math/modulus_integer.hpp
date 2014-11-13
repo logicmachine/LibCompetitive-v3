@@ -6,6 +6,17 @@
 
 namespace lc {
 
+/**
+ *  @defgroup modulus_integer Modulus integer
+ *  @brief    法演算ラッパー
+ *  @ingroup  math
+ *  @{
+ */
+
+/**
+ *  @brief  自動で法演算を行う整数
+ *  @tparam MOD  法とする値
+ */
 template <int MOD>
 class ModulusInteger {
 
@@ -93,6 +104,10 @@ std::ostream& operator<<(std::ostream &os, const ModulusInteger<MOD> &x){
 	os << *x;
     return os;
 }
+
+/**
+ *  @}
+ */
 
 }
 

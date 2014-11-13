@@ -3,7 +3,8 @@
  */
 
 /**
- *  @defgroup traits Traits for range queryable data structures
+ *  @defgroup traits Traits
+ *  @brief    区間クエリを行うデータ構造用の特性例
  *  @ingroup  structure
  */
 

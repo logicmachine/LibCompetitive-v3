@@ -9,6 +9,7 @@ namespace lc {
 
 /**
  *  @defgroup combination_table Combination table
+ *  @brief    二項係数テーブル
  *  @ingroup  math
  *  @{
  */

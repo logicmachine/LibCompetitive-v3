@@ -11,6 +11,7 @@ namespace lc {
 
 /**
  *  @defgroup heavy_light_decomposition Heavy-light decomposition
+ *  @brief    Heavy-light decomposition による木分解
  *  @ingroup  graph
  *  @{
  */

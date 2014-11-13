@@ -8,7 +8,8 @@
 namespace lc {
 
 /**
- *  @defgroup lazy_treap_list List (based on Treap, supports lazy modification)
+ *  @defgroup lazy_treap_list List (treap, lazy)
+ *  @brief    Treap によるリストの実装 (遅延更新あり)
  *  @ingroup  structure
  *  @{
  */

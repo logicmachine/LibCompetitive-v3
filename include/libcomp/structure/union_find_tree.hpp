@@ -8,6 +8,7 @@ namespace lc {
 
 /**
  *  @defgroup union_find_tree Union-find tree (disjoint set)
+ *  @brief    Union-Find 木 / Disjoint set
  *  @ingroup  structure
  *  @{
  */

@@ -13,6 +13,7 @@ namespace lc {
 
 /**
  *  @defgroup mincostflow_primal_dual Minimum cost flow (Primal-Dual)
+ *  @brief    Primal-Dual 法による最小費用流
  *  @ingroup  graph
  *  @{
  */

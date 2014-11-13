@@ -9,7 +9,8 @@
 namespace lc {
 
 /**
- *  @defgroup lazy_segment_tree Segment tree with lazy propagation
+ *  @defgroup lazy_segment_tree Segment tree (lazy)
+ *  @brief    遅延更新セグメント木
  *  @ingroup  structure
  *  @{
  */

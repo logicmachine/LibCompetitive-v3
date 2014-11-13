@@ -11,6 +11,7 @@ namespace lc {
 
 /**
  *  @defgroup residual_network Residual network
+ *  @brief    残余ネットワーク
  *  @ingroup  graph
  *  @{
  */

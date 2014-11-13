@@ -11,6 +11,7 @@ namespace lc {
 
 /**
  *  @defgroup maxflow_dinic Maximum flow (Dinic)
+ *  @brief    Dinic 法による最大流
  *  @ingroup  graph
  *  @{
  */

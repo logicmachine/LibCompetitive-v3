@@ -10,6 +10,7 @@ namespace lc {
 
 /**
  *  @defgroup segment_tree Segment tree
+ *  @brief    セグメント木
  *  @ingroup  structure
  *  @{
  */
