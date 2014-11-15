@@ -41,11 +41,13 @@ auto sssp_dijkstra(int source, const AdjacencyList<EdgeType> &graph)
 	result[source] = weight_type();
 	pq.push(std::make_pair(result[source], source));
 	while(!pq.empty()){
-		const auto d = pq.top().first, u = pq.top().second;
+		const auto d = pq.top().first;
+		const auto u = pq.top().second;
 		pq.pop();
 		if(result[u] < d){ continue; }
 		for(const auto &e : graph[u]){
-			const auto v = e.to, w = e.weight;
+			const auto v = e.to;
+			const auto w = e.weight;
 			if(d + w < result[v]){
 				result[v] = d + w;
 				pq.push(std::make_pair(result[v], v));

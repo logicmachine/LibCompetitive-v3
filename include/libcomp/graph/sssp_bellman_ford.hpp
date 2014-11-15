@@ -43,7 +43,8 @@ auto sssp_bellman_ford(int source, const AdjacencyList<EdgeType> &graph)
 		for(int u = 0; u < n; ++u){
 			if(result[u] >= inf){ continue; }
 			for(const auto &e : graph[u]){
-				const auto v = e.to, t = result[u] + e.weight;
+				const auto v = e.to;
+				const auto t = result[u] + e.weight;
 				if(t < result[v]){
 					result[v] = t;
 					updated = true;
