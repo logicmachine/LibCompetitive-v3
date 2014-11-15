@@ -33,7 +33,7 @@ template <typename EdgeType>
 auto sssp_bellman_ford(int source, const AdjacencyList<EdgeType> &graph)
 	-> std::vector<decltype(EdgeType().weight)>
 {
-	typedef decltype(EdgeType().weight_type) weight_type;
+	typedef decltype(EdgeType().weight) weight_type;
 	const auto inf = std::numeric_limits<weight_type>::max();
 	const int n = graph.size();
 	std::vector<weight_type> result(n, inf);
