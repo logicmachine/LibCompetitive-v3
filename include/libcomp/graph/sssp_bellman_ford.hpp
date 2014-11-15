@@ -30,7 +30,7 @@ namespace lc {
  *             負閉路を含む場合は空のベクタを返す
  */
 template <typename EdgeType>
-auto bellman_ford(int source, const AdjacencyList<EdgeType> &graph)
+auto sssp_bellman_ford(int source, const AdjacencyList<EdgeType> &graph)
 	-> std::vector<decltype(EdgeType().weight)>
 {
 	typedef decltype(EdgeType().weight_type) weight_type;

@@ -29,7 +29,7 @@ namespace lc {
  *  @return    sourceから各頂点への最短路の距離
  */
 template <typename EdgeType>
-auto dijkstra(int source, const AdjacencyList<EdgeType> &graph)
+auto sssp_dijkstra(int source, const AdjacencyList<EdgeType> &graph)
 	-> std::vector<decltype(EdgeType().weight)>
 {
 	typedef decltype(EdgeType().weight) weight_type;
