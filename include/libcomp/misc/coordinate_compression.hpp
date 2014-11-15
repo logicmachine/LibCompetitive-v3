@@ -83,6 +83,15 @@ public:
 	const T &decompress(const size_t x) const {
 		return m_coords[x];
 	}
+
+	/**
+	 *  @brief 圧縮用テーブルのサイズ取得
+	 *    - 時間計算量: \f$ O(1) \f$
+	 *  @return 圧縮用テーブルのサイズ
+	 */
+	size_t size() const {
+		return m_coords.size();
+	}
 };
 
 /**
