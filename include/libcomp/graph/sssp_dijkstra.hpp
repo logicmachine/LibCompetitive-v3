@@ -21,7 +21,7 @@ namespace lc {
  *  @brief ダイクストラ法による単一始点最短路
  *
  *  負の閉路を含まないグラフにおける単一始点最短路。
- *    - 時間計算量: \f$ O(|E| log |V|) \f$
+ *    - 時間計算量: \f$ O(|E| \log |V|) \f$
  *
  *  @tparam    EdgeType  辺データ型
  *  @param[in] source    始点となる頂点

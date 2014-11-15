@@ -44,7 +44,7 @@ public:
 	 *  @brief 総和の計算
 	 *
 	 *  BITに格納されている要素のうち \f$ k \in [0, i) \f$ 番目の要素の総和を求める。
-	 *    - 時間計算量: \f$ \mathcal{O}(\log{n}) \f$
+	 *    - 時間計算量: \f$ O(\log{n}) \f$
 	 *
 	 *  @param[in] i  区間の大きさ
 	 *  @return   0番目からi-1番目までの要素の総和
@@ -59,7 +59,7 @@ public:
 	 *  @brief 要素の更新
 	 *
 	 *  i番目の要素の値にxを加算する。
-	 *    - 時間計算量: \f$ \mathcal{O}(\log{n}) \f$
+	 *    - 時間計算量: \f$ O(\log{n}) \f$
 	 *
 	 *  @param[in] i  更新したい要素のインデックス
 	 *  @param[in] x  i番目の要素に加算する値

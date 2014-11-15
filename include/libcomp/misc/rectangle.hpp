@@ -6,7 +6,7 @@
 namespace lc {
 
 /**
- *  @defgroup rectangle rectangle
+ *  @defgroup rectangle Rectangle
  *  @brief    矩形
  *  @ingroup  misc
  *  @{
