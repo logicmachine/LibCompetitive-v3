@@ -8,7 +8,7 @@
 namespace lc {
 
 /**
- *  @defgroup coordinate_compression 座標圧縮
+ *  @defgroup coordinate_compression Coordinate compression
  *  @brief    座標圧縮
  *  @ingroup  misc
  *  @{
