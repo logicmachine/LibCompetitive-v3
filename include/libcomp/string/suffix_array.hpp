@@ -67,7 +67,7 @@ private:
 
 	template <class T>
 	void sa_is(int *sa, const T *s, int n) const {
-		std::vector<bool> types(n); // false = L-type, true = S-type
+		std::vector<bool> types(n);
 		types[n - 1] = true;
 		for(int i = n - 2; i >= 0; --i){
 			types[i] = (s[i] != s[i + 1] ? s[i] < s[i + 1] : types[i + 1]);
@@ -129,10 +129,12 @@ private:
 		induce_sa_s(sa, s, n, k, types);
 	}
 
-	std::vector<int> sa_is(const std::string &s) const {
+	template <class T>
+	std::vector<int> sa_is(const T &s) const {
+		if(s.size() == 0){ return std::vector<int>(1); }
 		const int n = s.size() + 1;
-		std::vector<char> vs(n);
-		for(int i = 0; i < n; ++i){ vs[i] = s[i]; }
+		std::vector<int> vs(n);
+		for(int i = 0; i + 1 < n; ++i){ vs[i] = s[i]; }
 		std::vector<int> sa(n);
 		sa_is(sa.data(), vs.data(), n);
 		return sa;
@@ -140,11 +142,16 @@ private:
 
 public:
 	/**
+	 *  @brief デフォルトコンストラクタ
+	 */
+	SuffixArray() : m_suffix_array(1) { }
+	/**
 	 *  @brief 接尾辞配列の構築
 	 *    - 時間計算量: \f$ O(n) \f$
 	 *  @param[in] s  接尾辞配列の元とする文字列
 	 */
-	SuffixArray(const std::string &s = "")
+	template <class T>
+	explicit SuffixArray(const T &s)
 		: m_suffix_array(sa_is(s))
 	{ }
 
