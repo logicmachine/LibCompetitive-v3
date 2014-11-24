@@ -76,6 +76,13 @@ struct Line {
 	Point reflection(const Point &p) const {
 		return p + 2.0 * (projection(p) - p);
 	}
+	/**
+	 *  @brief  直線の向きの計算
+	 *  @return 直線と同じ向きの単位ベクトル
+	 */
+	Point direction() const {
+		return (b - a).unit();
+	}
 };
 
 /**
@@ -110,6 +117,20 @@ inline bool directed_tolerant_eq(const Line &a, const Line &b){
  */
 inline bool is_parallel(const Line &a, const Line &b){
 	return abs(cross(a.b - a.a, b.b - b.a)) < EPS;
+}
+
+/**
+ *  @brief 直線と点の進行方向
+ *  @param[in] l  直線
+ *  @param[in] p  点
+ *  @retval    0   曲線(l.a, l.b, p)が点l.bで180度曲がり点pが点l.a, l.bの間にある場合
+ *  @retval    1   曲線(l.a, l.b, p)が点l.bで反時計回りに曲がっている場合
+ *  @retval    -1  曲線(l.a, l.b, p)が点l.bで時計回りに曲がっている場合
+ *  @retval    2   曲線(l.a, l.b, p)が点l.bで180度曲がり点pが点l.aを通り過ぎる場合
+ *  @retval    -2  曲線(l.a, l.b, p)が一直線である場合
+ */
+inline int ccw(const Line &l, const Point &p){
+	return ccw(l.a, l.b, p);
 }
 
 /**

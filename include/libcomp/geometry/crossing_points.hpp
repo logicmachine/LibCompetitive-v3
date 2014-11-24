@@ -3,10 +3,43 @@
  */
 #pragma once
 #include <vector>
+#include "libcomp/geometry/line.hpp"
+#include "libcomp/geometry/segment.hpp"
 #include "libcomp/geometry/circle.hpp"
 #include "libcomp/geometry/intersect.hpp"
 
 namespace lc {
+
+/**
+ *  @brief 直線と円の交点
+ *  @param[in] l  直線
+ *  @param[in] c  円
+ *  @return    lとcの交点の座標
+ */
+inline std::vector<Point> crossing_points(const Line &l, const Circle &c){
+	const Point &p = l.projection(c.c);
+	const double t = (p - c.c).abs();
+	if(t > c.r + EPS){ return std::vector<Point>(); }
+	if(t > c.r - EPS){ return std::vector<Point>(1, p); }
+	const Point v = l.direction();
+	const double d = sqrt(c.r * c.r - t * t);
+	return std::vector<Point>({ p + d * v, p - d * v });
+}
+
+/**
+ *  @brief 線分と円の交点
+ *  @param[in] s  線分
+ *  @param[in] c  円
+ *  @return    sとcの交点の座標
+ */
+inline std::vector<Point> crossing_points(const Segment &s, const Circle &c){
+	const std::vector<Point> cps(crossing_points(s.to_line(), c));
+	std::vector<Point> result;
+	for(const auto &p : cps){
+		if(intersect(s, p)){ result.push_back(p); }
+	}
+	return result;
+}
 
 /**
  *  @brief 円と円の交点

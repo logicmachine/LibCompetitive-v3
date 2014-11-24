@@ -57,6 +57,20 @@ struct Circle {
 	bool operator<(const Circle &i) const {
 		return (r == i.r) ? (c < i.c) : (r < i.r);
 	}
+
+	/**
+	 *  @brief 円と点の内外判定
+	 *  @param[in] p   判定する点
+	 *  @retval    0   p が *this の外側にある場合
+	 *  @retval    1   p が *this の内側にある場合
+	 *  @retval    -1  p が *this の円周上にある場合
+	 */
+	int contains(const Point &p) const {
+		const double d2 = (p - c).norm(), r2 = r * r;
+		if(d2 > r2){ return 0; }
+		if(d2 < r2){ return 1; }
+		return -1;
+	}
 };
 
 /**

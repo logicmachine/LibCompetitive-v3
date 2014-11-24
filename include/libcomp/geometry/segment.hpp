@@ -64,6 +64,20 @@ struct Segment {
 	 *  @return 線分 *this を含む直線
 	 */
 	Line to_line() const { return Line(a, b); }
+
+	/**
+	 *  @brief 線分の長さの計算
+	 *  @return 線分の長さ
+	 */
+	double length() const { return (b - a).abs(); }
+
+	/**
+	 *  @brief  線分の向きの計算
+	 *  @return 線分と同じ向きの単位ベクトル
+	 */
+	Point direction() const {
+		return (b - a).unit();
+	}
 };
 
 /**
