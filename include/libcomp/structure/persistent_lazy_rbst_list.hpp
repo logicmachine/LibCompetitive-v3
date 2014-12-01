@@ -41,6 +41,7 @@ private:
 		std::shared_ptr<node_type> children[2];
 	};
 	typedef std::shared_ptr<node_type> node_ptr;
+	typedef PoolAllocator<node_type> allocator_type;
 
 	Traits m_traits;
 	node_ptr m_root;
@@ -57,6 +58,10 @@ private:
 		return p->size;
 	}
 
+	node_ptr copy_node(const node_ptr &p) const {
+		return std::allocate_shared<node_type>(allocator_type(), *p);
+	}
+
 	node_ptr refresh(node_ptr &p) const {
 		if(!p){ return node_ptr(); }
 		value_type cache = p->value;
@@ -71,19 +76,16 @@ private:
 		const size_t k = size(p->children[0]);
 		const auto mod_l_cr = m_traits.split_modifier(p->modifier, k);
 		const auto mod_c_r  = m_traits.split_modifier(mod_l_cr.second, 1);
-		//node_ptr q = std::make_shared<node_type>(*p);
-		node_ptr q = std::allocate_shared<node_type>(PoolAllocator<node_type>(), *p);
+		node_ptr q = std::allocate_shared<node_type>(allocator_type(), *p);
 		if(q->modifier == m_traits.default_modifier()){ return q; }
 		if(p->children[0]){
-			//q->children[0] = std::make_shared<node_type>(*p->children[0]);
-			q->children[0] = std::allocate_shared<node_type>(PoolAllocator<node_type>(), *p->children[0]);
+			q->children[0] = copy_node(q->children[0]);
 			q->children[0]->modifier = m_traits.merge_modifier(
 				q->children[0]->modifier, mod_l_cr.first);
 			refresh(q->children[0]);
 		}
 		if(p->children[1]){
-			//q->children[1] = std::make_shared<node_type>(*p->children[1]);
-			q->children[1] = std::allocate_shared<node_type>(PoolAllocator<node_type>(), *p->children[1]);
+			q->children[1] = copy_node(q->children[1]);
 			q->children[1]->modifier = m_traits.merge_modifier(
 				q->children[1]->modifier, mod_c_r.second);
 			refresh(q->children[1]);
@@ -178,8 +180,7 @@ public:
 	 */
 	self_type insert(size_t k, const value_type &x) const {
 		const auto p = split(m_root, k);
-		//node_ptr n = std::make_shared<node_type>();
-		node_ptr n = std::allocate_shared<node_type>(PoolAllocator<node_type>());
+		node_ptr n = std::allocate_shared<node_type>(allocator_type());
 		initialize_node(n, x);
 		return self_type(merge(merge(p.first, n), p.second), m_traits);
 	}
