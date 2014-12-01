@@ -1,7 +1,8 @@
 /**
- *  @file libcomp/structure/persistent_lazy_treap_list.hpp
+ *  @file libcomp/structure/persistent_lazy_rbst_list.hpp
  */
 #pragma once
+#include <limits>
 #include <utility>
 #include <memory>
 #include "libcomp/system/intrusive_ptr.hpp"
@@ -10,22 +11,22 @@
 namespace lc {
 
 /**
- *  @defgroup persistent_treap_list Persistent list (treap, lazy)
- *  @brief    Treap による永続リストの実装 (遅延更新あり)
+ *  @defgroup persistent_rbst_list Persistent list (RBST, lazy)
+ *  @brief    RBST による永続リストの実装 (遅延更新あり)
  *  @ingroup  structure
  *  @{
  */
 
 /**
- *  @brief  Treapを用いた永続遅延更新リスト
+ *  @brief  RBSTを用いた永続遅延更新リスト
  *  @tparam Traits  リストの動作を示す型
  */
 template <class Traits>
-class PersistentLazyTreapList {
+class PersistentLazyRBSTList {
 
 public:
 	/// 自身の型
-	typedef PersistentLazyTreapList<Traits> self_type;
+	typedef PersistentLazyRBSTList<Traits> self_type;
 	/// 値型
 	typedef typename Traits::value_type value_type;
 	/// 更新クエリ型
@@ -36,7 +37,6 @@ private:
 		value_type value;
 		value_type cache;
 		modifier_type modifier;
-		unsigned int priority;
 		size_t size;
 		IntrusivePtr<node_type> children[2];
 		// Smart pointer
@@ -50,7 +50,6 @@ private:
 	void initialize_node(node_ptr &p, const value_type &v) const {
 		p->value = p->cache = v;
 		p->modifier = m_traits.default_modifier();
-		p->priority = xorshift128();
 		p->size = 1;
 		p->children[0] = p->children[1] = node_ptr();
 	}
@@ -96,7 +95,9 @@ private:
 	node_ptr merge(const node_ptr &l, const node_ptr &r) const {
 		if(!l){ return r; }
 		if(!r){ return l; }
-		if(l->priority > r->priority){
+		const size_t limit = std::numeric_limits<unsigned int>::max();
+		const size_t ls = size(l), rs = size(r);
+		if(xorshift128() * (ls + rs) < ls * limit){
 			node_ptr t = propagate(l);
 			t->children[1] = merge(t->children[1], r);
 			return refresh(t);
@@ -120,7 +121,7 @@ private:
 		}
 	}
 
-	PersistentLazyTreapList(node_ptr root, const Traits &traits)
+	PersistentLazyRBSTList(node_ptr root, const Traits &traits)
 		: m_traits(traits)
 		, m_root(root)
 	{ }
@@ -134,7 +135,7 @@ public:
 	 *
 	 *  @param[in] traits  処理内容を示すオブジェクト
 	 */
-	explicit PersistentLazyTreapList(const Traits &traits = Traits())
+	explicit PersistentLazyRBSTList(const Traits &traits = Traits())
 		: m_traits(traits)
 		, m_root()
 	{ }
@@ -144,7 +145,7 @@ public:
 	 *    - 時間計算量: \f$ O(1) \f$
 	 *  @param[in] x  コピー元オブジェクト
 	 */
-	PersistentLazyTreapList(const self_type &x)
+	PersistentLazyRBSTList(const self_type &x)
 		: m_traits(x.m_traits)
 		, m_root(x.m_root)
 	{ }

@@ -1,11 +1,11 @@
 #include <cstdio>
 #include <vector>
-#include "libcomp/structure/persistent_lazy_treap_list.hpp"
+#include "libcomp/structure/persistent_lazy_rbst_list.hpp"
 #include "libcomp/structure/lazy_traits/sum_add.hpp"
 
 using namespace std;
 typedef long long ll;
-typedef lc::PersistentLazyTreapList<lc::LazySumRangeAddTraits<ll>> PersistentList;
+typedef lc::PersistentLazyRBSTList<lc::LazySumRangeAddTraits<ll>> PersistentList;
 
 int main(){
 	int n, q;
