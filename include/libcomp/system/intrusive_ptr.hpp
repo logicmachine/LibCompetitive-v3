@@ -5,7 +5,7 @@ namespace lc {
 /**
  *  @defgroup intrusive_ptr Intrusive smart pointer
  *  @brief    侵入型参照カウント方式スマートポインタ
- *  @ingroup  misc
+ *  @ingroup  system
  *  @{
  */
 

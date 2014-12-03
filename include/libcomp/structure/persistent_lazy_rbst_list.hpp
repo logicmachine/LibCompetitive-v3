@@ -11,7 +11,7 @@
 namespace lc {
 
 /**
- *  @defgroup persistent_rbst_list Persistent list (RBST, lazy)
+ *  @defgroup persistent_lazy_rbst_list Persistent list (RBST, lazy)
  *  @brief    RBST による永続リストの実装 (遅延更新あり)
  *  @ingroup  structure
  *  @{
