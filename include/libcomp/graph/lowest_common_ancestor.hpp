@@ -61,7 +61,8 @@ public:
 		int root, const AdjacencyList<EdgeType> &graph)
 		: m_depth_table(graph.size(), -1)
 		, m_skip_table(
-			graph.size(), std::vector<int>(32 - __builtin_clz(graph.size())))
+			graph.size(),
+			std::vector<int>(32 - __builtin_clz(graph.size()), -1))
 	{
 		std::vector<int> s;
 		build_tables(root, s, graph);
@@ -105,6 +106,18 @@ public:
 	 */
 	int get_depth(int v) const {
 		return m_depth_table[v];
+	}
+
+	/**
+	 *  @brief 頂点の親を取得する
+	 *
+	 *  頂点 v の親を取得する。
+	 *
+	 *  @param[in] v  頂点番号
+	 *  @return    v の親の頂点番号。v が根の場合は-1。
+	 */
+	int get_parent(int v) const {
+		return m_skip_table[v][0];
 	}
 
 };
