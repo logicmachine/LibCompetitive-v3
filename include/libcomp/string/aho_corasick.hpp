@@ -14,7 +14,7 @@ namespace lc {
 /**
  *  @defgroup aho_corasick Aho-Corasick
  *  @brief    Aho-Corasick法による複数パターンマッチング
- *  @ingourp string
+ *  @ingroup  string
  *  @{
  */
 
