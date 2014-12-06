@@ -10,6 +10,7 @@ namespace lc {
 
 /**
  *  @defgroup kmp Knuth-Morris-Pratt algorithm
+ *  @brief    KMP法による単一パターンマッチング
  *  @ingroup  string
  *  @{
  */
