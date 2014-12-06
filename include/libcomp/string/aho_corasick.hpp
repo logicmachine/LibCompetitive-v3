@@ -14,21 +14,25 @@ namespace lc {
 /**
  *  @defgroup aho_corasick Aho-Corasick
  *  @brief    Aho-Corasick法による複数パターンマッチング
- *  @infgourp string
+ *  @ingourp string
  *  @{
  */
 
-template <int MAX_CODE = 128>
+/**
+ *  @brief Aho-Corasick法による複数パターンマッチング
+ *  @tparam CHARACTER_KINDS  文字集合の大きさ
+ */
+template <int CHARACTER_KINDS = 128>
 class AhoCorasick {
 
 private:
 	struct State {
-		int next[MAX_CODE];
+		int next[CHARACTER_KINDS];
 		int failure;
 		std::vector<int> accept;
 
 		State() : failure(0), accept() {
-			std::fill(next, next + MAX_CODE, -1);
+			std::fill(next, next + CHARACTER_KINDS, -1);
 		}
 	};
 
@@ -58,7 +62,7 @@ private:
 			const int index = q.front();
 			q.pop();
 			const State &s = m_states[index];
-			for(int i = 0; i < MAX_CODE; ++i){
+			for(int i = 0; i < CHARACTER_KINDS; ++i){
 				const int next = s.next[i];
 				if(next < 0){ continue; }
 				q.push(next);
@@ -78,10 +82,19 @@ private:
 	}
 
 public:
+	/**
+	 *  @brief デフォルトコンストラクタ
+	 */
 	AhoCorasick()
 		: m_states(1)
 	{ }
 
+	/**
+	 *  @brief パターンマッチオートマトンの生成
+	 *    - 時間計算量: \f$ O(\sum |S|) \f$
+	 *  @param[in] first  パターン集合の先頭を指すイテレータ
+	 *  @param[in] last   パターン集合の終端を指すイテレータ
+	 */
 	template <class Iterator>
 	AhoCorasick(Iterator first, Iterator last)
 		: m_states()
@@ -90,12 +103,23 @@ public:
 		write_failure_links();
 	}
 
+	/**
+	 *  @brief 文字を1文字追加して状態を進める
+	 *    - 時間計算量: \f$ O(1) \f$ (文字集合サイズに比例)
+	 *  @param[in] c  入力する文字
+	 *  @param[in] s  更新する前の状態
+	 *  @return    更新後の状態とマッチしたパターンの集合
+	 */
 	std::pair<int, const std::vector<int> &> iterate(int c, int s) const {
 		while(s != 0 && m_states[s].next[c] < 0){ s = m_states[s].failure; }
 		s = std::max(0, m_states[s].next[c]);
 		return std::pair<int, const std::vector<int> &>(s, m_states[s].accept);
 	}
 
+	/**
+	 *  @brief  パターンマッチオートマトンのノード数の取得
+	 *  @return パターンマッチオートマトンのノード数
+	 */
 	size_t size() const {
 		return m_states.size();
 	}
