@@ -88,44 +88,27 @@ template <class T>
 class PoolAllocator {
 
 public:
-	typedef size_t size_type;
-	typedef ptrdiff_t difference_type;
-	typedef T *pointer;
-	typedef const T *const_pointer;
-	typedef T &reference;
-	typedef const T &const_reference;
 	typedef T value_type;
 
+	PoolAllocator() noexcept { }
+	PoolAllocator(const PoolAllocator<value_type> &) noexcept { }
 	template <class U>
-	struct rebind {
-		typedef PoolAllocator<U> other;
-	};
+	PoolAllocator(const PoolAllocator<U> &) noexcept { }
+	~PoolAllocator() noexcept { }
 
-	PoolAllocator(){ }
-	template <class U>
-	PoolAllocator(const PoolAllocator<U> &){ }
-
-	pointer allocate(size_type n, const void *hint = 0){
+	value_type *allocate(size_t n){
 		return FixedMemoryPool<T>::instance().allocate();
 	}
-	void deallocate(pointer p, size_type){
+	void deallocate(value_type *p, size_t){
 		FixedMemoryPool<T>::instance().deallocate(p);
 	}
 
-	template <class U, class... Args>
-	void construct(U *p, Args&&... args){
-		new(static_cast<void *>(p)) T(std::forward<Args>(args)...);
-	}
-	template <class U> void destroy(U *p){ p->~U(); }
+	size_t max_size() const noexcept { return 1; }
 
-	pointer address(reference x) const noexcept {
-		return std::addressof(x);
-	}
-	const_pointer address(const_reference x) const noexcept {
-		return std::addressof(x);
-	}
-
-	size_type max_size() const noexcept { return 1; }
+	template <typename U>
+	bool operator==(const PoolAllocator<U> &){ return false; }
+	template <typename U>
+	bool operator!=(const PoolAllocator<U> &){ return true; }
 
 };
 
