@@ -6,7 +6,6 @@
 #include <stack>
 #include <queue>
 #include <type_traits>
-#include "libcomp/graph/edge_traits.hpp"
 #include "libcomp/graph/adjacency_list.hpp"
 #include "libcomp/misc/top_k.hpp"
 
