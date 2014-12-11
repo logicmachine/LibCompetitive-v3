@@ -87,7 +87,7 @@ inline double distance(const Point &a, const Circle &c){
  *  @param[in] b  判定する点
  *  @return    円aと点bの距離
  */
-inline double distance(const Circle &c, const Point &a){
+inline double distance(const Circle &a, const Point &b){
 	return distance(b, a);
 }
 

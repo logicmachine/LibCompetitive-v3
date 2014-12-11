@@ -4,6 +4,7 @@
 #pragma once
 #include <vector>
 #include "libcomp/geometry/point.hpp"
+#include "libcomp/geometry/segment.hpp"
 
 namespace lc {
 
@@ -85,6 +86,15 @@ public:
 	 *  @return    i番目の頂点への参照
 	 */
 	Point &operator[](int i){ return m_points[i]; }
+
+	/**
+	 *  @brief 辺の取得
+	 *  @param[in] i  取得したい辺へのインデックス
+	 *  @return    i番目の点とi+1番目の点からなる辺
+	 */
+	Segment side(int i) const {
+		return Segment(m_points[i], m_points[(i + 1) % m_points.size()]);
+	}
 
 	/**
 	 *  @brief 多角形の頂点数の取得

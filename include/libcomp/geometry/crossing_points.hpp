@@ -11,6 +11,26 @@
 namespace lc {
 
 /**
+ *  @brief 直線と直線の交点
+ *  @param[in] a  直線
+ *  @param[in] b  直線
+ *  @return    aとbの交点の座標。
+ *             aとbが等しい場合は直線上の2点を返す。
+ */
+inline std::vector<Point> crossing_points(const Line &a, const Line &b){
+	std::vector<Point> ret;
+	if(lc::tolerant_eq(a, b)){
+		ret.push_back(a.a);
+		ret.push_back(a.b);
+	}else{
+		const double x = cross(a.b - a.a, b.b - b.a);
+		const double y = cross(a.b - a.a, a.b - b.a);
+		if(abs(x) >= EPS){ ret.push_back(b.a + y / x * (b.b - b.a)); }
+	}
+	return ret;
+}
+
+/**
  *  @brief 直線と円の交点
  *  @param[in] l  直線
  *  @param[in] c  円

@@ -19,7 +19,7 @@ private:
 	double m_offset_y;
 
 	double trans_x(double x) const { return x * m_scale + m_offset_x; }
-	double trans_y(double y) const { return y * m_scale + m_offset_y; }
+	double trans_y(double y) const { return y * -m_scale + m_offset_y; }
 
 public:
 	explicit Visualizer(
