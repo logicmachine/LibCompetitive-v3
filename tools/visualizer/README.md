@@ -3,18 +3,18 @@ Geometry visualizer
 
 平面幾何用ビジュアライザ
 
-** 入力ファイルフォーマット
+## 入力ファイルフォーマット
 - JSONで記述
 - 1つのSceneのみからなる
 
-*** Scene
+### Scene
 - 0個以上のLayerからなる配列
 
-*** Layer
+### Layer
 - name: レイヤー名
 - shapes: 0個以上のShapeからなる配列
 
-*** Shape
+### Shape
 - kind: 図形の種類 ("point", "line", "segment", "circle", "polygon")
 - coords: 図形を構成する座標列 ( [ x0, y0, x1, y1, ... xn, yn ] の順)
 - radius: 円の半径 (kind = "circle" の場合のみ)
@@ -26,7 +26,7 @@ Geometry visualizer
 - fill_opacity:
 
 
-** 依存している外部ライブラリ
+## 依存している外部ライブラリ
 - jQuery
   - http://jquery.com
 - Bootstrap
