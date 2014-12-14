@@ -13,6 +13,13 @@
 namespace lc {
 
 /**
+ *  @defgroup extract_polygons Extract polygons
+ *  @brief    点群と接続関係からの多角形列挙
+ *  @ingroup  geometry
+ *  @{
+ */
+
+/**
  *  @brief 点群と接続関係からの多角形列挙
  *
  *  点群pointsとその接続関係graphが与えられたとき、
@@ -65,6 +72,10 @@ std::vector<Polygon> extract_polygons(
 	}
 	return result;
 }
+
+/**
+ *  @}
+ */
 
 }
 
