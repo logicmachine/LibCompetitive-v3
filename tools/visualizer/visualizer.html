@@ -1,36 +1,73 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-<script type="text/javascript">
-function Point(x, y){
-}
-function Line(x1, y1, x2, y2){
-}
-function Segment(x1, y2, x2, y2){
-	canvas.beginPath();
-	canvas.moveTo(x1, y1);
-	canvas.lineTo(x2, y2);
-	canvas.stroke();
-}
-function Circle(x, y, r){
-	canvas.beginPath();
-	canvas.arc(x, y, r, 0, 2.0 * Math.PI, 0);
-	canvas.stroke();
-}
-function Arc(x, y, r, a, b){
-	canvas.beginPath();
-	canvas.arc(x, y, r, a, b, 0);
-	canvas.stroke();
-}
-window.onload = function(){
-	canvas = document.getElementById('c').getContext('2d');
-	document.getElementById('s').src = 'data.js?';
-};
-</script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Geometry visualizer</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="css/fileinput.min.css">
+  <link rel="stylesheet" href="css/visualizer.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+  <script src="js/fileinput.min.js"></script>
+  <script src="js/snap.svg-min.js"></script>
+  <script src="js/visualizer.js"></script>
 </head>
 <body>
-<canvas id="c" width="800" height="800" style="border:1px solid #000;"></canvas>
-<script id="s"></script>
+
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Geometry visualizer</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <form id="file-selector" class="navbar-form navbar-right navbar-file">
+        <input id="input-file" type="file" class="file form-control" data-show-preview="false" data-show-remove="false">
+        <script>
+          $("#input-file").fileinput({
+            browseLabel: "Browse"
+          , uploadLabel: " Load"
+          , uploadIcon:  '<i class="glyphicon glyphicon-refresh"></i>'
+          });
+        </script>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div id="svg-canvas" class="container svg-container">
+  <svg id="svg" width="100%"></svg>
+</div><!-- /.container -->
+
+<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-4">
+        <h4>View</h4>
+        <form role="form">
+          <div class="checkbox">
+            <label><input id="grid-check" type="checkbox"> Display grid</label>
+          </div>
+          <div class="checkbox">
+            <label><input id="subgrid-check" type="checkbox"> Display subgrid</label>
+          </div>
+          <div>
+            (<span id="mouse-x">0</span>, <span id="mouse-y">0</span>)
+          </div>
+        </form>
+      </div>
+      <div class="col-md-4">
+        <h4>Layers</h4>
+        <div id="layer-list" class="form-control scrollable-list">
+        </div>
+      </div>
+      <div class="col-md-4">
+      </div>
+    </div>
+  </div>
+</nav>
+
 </body>
 </html>
 

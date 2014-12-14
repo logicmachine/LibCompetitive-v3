@@ -10,6 +10,7 @@
 #include "libcomp/geometry/distance.hpp"
 #include "libcomp/geometry/crossing_points.hpp"
 #include "libcomp/geometry/straight_move.hpp"
+#include "libcomp/geometry/visualizer.hpp"
 #include "libcomp/geometry/debug.hpp"
 
 using namespace std;
@@ -73,9 +74,10 @@ double rotate_move(
 int main(){
 	ios_base::sync_with_stdio(false);
 	cout << setiosflags(ios::fixed) << setprecision(10);
-// lc::Visualizer vis(3.0, 400.0, 400.0);
-//lc::Visualizer vis(30.0, 400.0, 400.0);
-//lc::Visualizer vis(10.0, 800.0, -100.0);
+	lc::Visualizer vis("out.json");
+	vis.create_layer(0, "room");
+	vis.create_layer(1, "roomba");
+	vis.create_layer(2, "inner-polygon");
 	while(true){
 		int n;
 		double sx, sy, r;
@@ -87,13 +89,14 @@ int main(){
 			cin >> x >> y;
 			poly[i] = lc::Point(x - sx, y - sy);
 		}
+		vis(poly);
 		lc::Circle cur(lc::Point(0.0, 0.0), r);
+vis(cur, 1, lc::Visualizer::Style::fill("#ff0000", 0.25));
 		double init_x = INF;
 		for(int i = 0; i < n; ++i){
 			const auto s = poly.side(i);
 			init_x = min(
 				init_x, lc::straight_move(cur, lc::Point(1.0, 0.0), s));
-//vis(s);
 		}
 		cur.c.x = init_x;
 		// initialize (rotate)
@@ -163,7 +166,7 @@ int main(){
 				cur.c += dir * move;
 				prev = line.projection(cur.c);
 				trace.push_back(prev);
-//vis(cur);
+vis(cur, 1, lc::Visualizer::Style::fill("#ff0000", 0.25));
 				move_flag = true;
 			}
 			if((cur.c - side.b).abs() < cur.r + lc::EPS){
@@ -182,7 +185,7 @@ int main(){
 				cur.c = side.b + cur.r * lc::Point(cos(goal), sin(goal));
 				trace.push_back(cur.c);
 				prev = side.b;
-//vis(cur);
+vis(cur, 1, lc::Visualizer::Style::fill("#ff0000", 0.25));
 				move_flag = true;
 			}
 			if(end >= 3 * n && move_flag){
@@ -201,9 +204,7 @@ int main(){
 			uniq_trace.pop_back();
 		}
 		const lc::Polygon trace_poly(uniq_trace.begin(), uniq_trace.end());
-//for(int i = 0; i < trace_poly.size(); ++i){
-//	vis(trace_poly.side(i));
-//}
+vis(trace_poly, 2, lc::Visualizer::Style::fill("#0000ff", 0.25));
 		double answer = trace_poly.area();
 		const int m = trace_poly.size();
 		for(int i = 0; i < m; ++i){
