@@ -39,7 +39,7 @@ LFLAGS = --ldflags --libs
 CFLAGS = --cxxflags
 
 
-all:$(MAIN_OBJ) $(ANALYZER_OBJ) $(MINIFIER_OBJ)
+$(TOOL):$(MAIN_OBJ) $(ANALYZER_OBJ) $(MINIFIER_OBJ)
 	mkdir -p $(BIN_DIR)
 	$(CC) -g $(MAIN_OBJ) $(ANALYZER_OBJ) $(MINIFIER_OBJ) $(LIBS) `$(CONFIG) $(LFLAGS)` -static -ltinfo -lncurses -lstdc++ -lpthread -lm -ldl -lz -o $(TOOL)
 
@@ -51,6 +51,10 @@ $(ANALYZER_OBJ):$(ANALYZER_SRC)
 
 $(MINIFIER_OBJ):$(MINIFIER_SRC)
 	$(CC) -g $(MINIFIER_SRC) `$(CONFIG) $(CFLAGS)` -fno-rtti -c -o $(MINIFIER_OBJ) 
+
+.PHONY: test
+test:$(TOOL)
+	python run_test.py $(TOOL)
 
 clean:
 	rm -rf $(MAIN_OBJ) $(ANALYZER_OBJ) $(MINIFIER_OBJ) $(TOOL)

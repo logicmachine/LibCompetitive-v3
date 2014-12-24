@@ -33,13 +33,13 @@ public:
 			, fill_opacity(0.0)
 		{ }
 
-		static Style stroke(const std::string &color, double opacity = 0.0){
+		static Style stroke(const std::string &color, double opacity = 1.0){
 			Style style;
 			style.stroke_color = color;
 			style.stroke_opacity = opacity;
 			return style;
 		}
-		static Style fill(const std::string &color, double opacity = 0.0){
+		static Style fill(const std::string &color, double opacity = 1.0){
 			Style style;
 			style.stroke_color = color;
 			style.fill_color = color;

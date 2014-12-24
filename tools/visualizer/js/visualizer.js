@@ -77,7 +77,7 @@ var render = function(data){
 		layer.shapes.forEach(function(shape){
 			if(shape.kind == "point"){
 				var c = transform(shape.coords);
-				var s = paper.circle(c[0], c[1], 1.0);
+				var s = paper.circle(c[0], c[1], 2.0);
 				apply_attribute(s, shape);
 				group.add(s);
 			}else if(shape.kind == "line"){
