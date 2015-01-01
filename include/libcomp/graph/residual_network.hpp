@@ -61,7 +61,6 @@ auto make_residual(const AdjacencyList<EdgeType> &graph)
 	-> typename std::enable_if<
 		!HasWeight<EdgeType>::value, ResidualAdjacencyList<EdgeType>>::type
 {
-	HasWeight<EdgeType>(); // [[MINIFIER_REMOVE]]
 	typedef decltype(EdgeType().capacity) capacity_type;
 	const int n = graph.size();
 	ResidualAdjacencyList<EdgeType> result(n);
@@ -88,7 +87,6 @@ auto make_residual(const AdjacencyList<EdgeType> &graph)
 	-> typename std::enable_if<
 		HasWeight<EdgeType>::value, ResidualAdjacencyList<EdgeType>>::type
 {
-	HasWeight<EdgeType>(); // [[MINIFIER_REMOVE]]
 	typedef decltype(EdgeType().capacity) capacity_type;
 	const int n = graph.size();
 	ResidualAdjacencyList<EdgeType> result(n);

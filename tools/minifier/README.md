@@ -9,7 +9,8 @@ Minifier
 ### ビルド
 - LLVM/Clangに依存しています。
   - Debian Wheezy + llvm.orgのaptリポジトリからインストールできるLLVM/Clang 3.5で開発しています。
-- 必要なパッケージがそろっていればmakeするだけでbin/minifierが生成されるはずです。
+- 必要なパッケージがそろっていれば ```cd src``` して ```make``` するだけでbin/minifierが生成されるはずです。
+- テスト用の入出力は ```test``` 以下に入っています。ビルド後に ```make test``` でまとめてテストできます。
 
 ### オプションなど
     $ minifier -include=<ライブラリのルートへのパス> <入力ソースファイル>

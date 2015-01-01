@@ -11,7 +11,7 @@ if __name__ == '__main__':
 		print 'Usage: python %s minifier_path [test_directory]' % sys.argv[0]
 		quit()
 	minifier_path = sys.argv[1]
-	test_directory = os.path.dirname(os.path.abspath(__file__)) + '/test'
+	test_directory = os.path.dirname(os.path.abspath(__file__))
 	if len(sys.argv) >= 3:
 		test_directory = sys.argv[2]
 	test_directory = os.path.abspath(test_directory)

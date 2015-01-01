@@ -5,6 +5,7 @@ minifier-specification
 
 ### グローバル変数 (VarDecl)
 - 残して初期化に用いられる式をコールグラフに追加する
+  - VarDeclから取得できるTypeにはテンプレート引数の式が残っている
 
 ### グローバル関数 (FunctionDecl)
 - コールグラフ上で到達可能な場合のみ残す
@@ -77,3 +78,7 @@ minifier-specification
 
 ### TemplateSpecializationType
 
+
+## 削除までの流れ
+- main・グローバル変数の初期化からコールグラフを辿る
+  - 残す必要のある要素にマークをつけていく

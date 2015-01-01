@@ -1,23 +1,9 @@
-#include "clang/AST/ASTConsumer.h"
-#include "clang/AST/ASTContext.h"
-#include "clang/ASTMatchers/ASTMatchers.h"
-#include "clang/ASTMatchers/ASTMatchFinder.h"
-#include "clang/Frontend/FrontendActions.h"
 #include "clang/Frontend/CompilerInstance.h"
-#include "clang/Analysis/CallGraph.h"
 #include "clang/Tooling/CommonOptionsParser.h"
 #include "clang/Tooling/Tooling.h"
-#include "clang/Tooling/ReplacementsYaml.h"
-#include "clang/Tooling/Refactoring.h"
-#include "llvm/ADT/PostOrderIterator.h"
-#include "llvm/ADT/SmallString.h"
 #include "llvm/Support/CommandLine.h"
-#include "llvm/Support/FileSystem.h"
-#include "llvm/Support/Path.h"
-#include "llvm/Support/Program.h"
-#include "llvm/Support/SystemUtils.h"
-#include "DependencyAnalyzer.hpp"
-#include "Minifier.hpp"
+#include "dependency_analyzer.hpp"
+#include "minifier.hpp"
 
 static llvm::cl::OptionCategory MinifierCategory("Minifier options");
 static llvm::cl::opt<std::string> SourcePath(
@@ -50,9 +36,6 @@ int main(int argc, const char **argv) {
 
 	clang::tooling::ClangTool tool(*compilations, SourcePath);
 	tool.setArgumentsAdjuster(new clang::tooling::ClangSyntaxOnlyAdjuster());
-	DependencyAnalyzer analyzer;
-	analyzer.Analyze(tool);
-	Minifier minifier;
-	minifier.Minify(tool, analyzer);
-	return 0;
+	const auto removal = analyze_dependency(tool);
+	return minify(std::cout, tool, removal);
 }
