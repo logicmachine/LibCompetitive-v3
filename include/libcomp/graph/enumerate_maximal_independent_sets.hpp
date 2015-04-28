@@ -39,21 +39,20 @@ void enumerate_maximal_independent_sets(
 	std::function<void(int, uint64_t, uint64_t)> recur =
 		[&, n](int i, uint64_t picked, uint64_t eliminated) -> void {
 			if(i == n){
-				if((picked | eliminated) == (1ull << n) - 1){ func(picked); }
-			}else if(bit_graph[i] & ~(incr_bit_graph[i + 1] | eliminated)){
-				if(!(eliminated & (1ull << i))){
-					recur(i + 1, picked | (1ull << i), eliminated | bit_graph[i]);
-				}else{
-					recur(i + 1, picked, eliminated);
-				}
+				func(picked);
+				return;
+			}
+			const bool force_ignore = ((eliminated & (1ull << i)) != 0);
+			int flags = 1; // 1: select v_i, 2: ignore v_i
+			if(bit_graph[i] & ~(incr_bit_graph[i + 1] | eliminated)){
+				flags = (force_ignore ? 2 : 1);
 			}else if((incr_bit_graph[i + 1] | eliminated) & (1ull << i)){
-				recur(i + 1, picked, eliminated);
-				if(!(eliminated & (1ull << i))){
-					recur(i + 1, picked | (1ull << i), eliminated | bit_graph[i]);
-				}
-			}else{
+				flags = (force_ignore ? 2 : 3);
+			}
+			if(flags & 1){
 				recur(i + 1, picked | (1ull << i), eliminated | bit_graph[i]);
 			}
+			if(flags & 2){ recur(i + 1, picked, eliminated); }
 		};
 	recur(0, 0, 0);
 }
