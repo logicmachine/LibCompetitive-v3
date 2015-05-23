@@ -10,7 +10,8 @@
 namespace lc {
 
 /**
- *  @defgroup fast_fourier_transform 高速フーリエ変換
+ *  @defgroup fast_fourier_transform Fast fourier transform
+ *  @brief    高速フーリエ変換
  *  @ingroup  math
  *  @{
  */
