@@ -28,9 +28,9 @@ public:
 	typedef typename Traits::value_type value_type;
 
 private:
+	int m_size;
 	Traits m_traits;
 	std::vector<value_type> m_data;
-	int m_size;
 
 	void initialize(){
 		for(int i = m_size - 2; i >= 0; --i){
@@ -57,7 +57,7 @@ public:
 	 *  @param[in] traits  処理内容を示す関数オブジェクト
 	 */
 	explicit SegmentTree(int size = 0, const Traits &traits = Traits()) :
-		m_size(1), m_traits(traits)
+		m_size(1), m_traits(traits), m_data()
 	{
 		while(m_size < size){ m_size *= 2; }
 		m_data.assign(m_size * 2 - 1, m_traits.default_value());
@@ -77,7 +77,7 @@ public:
 	template <typename Iterator>
 	SegmentTree(
 		Iterator first, Iterator last, const Traits &traits = Traits()) :
-		m_size(1), m_traits(traits)
+		m_size(1), m_traits(traits), m_data()
 	{
 		const int n = std::distance(first, last);
 		while(m_size < n){ m_size *= 2; }
