@@ -3,7 +3,10 @@
  */
 #pragma once
 #include <algorithm>
+#include <cassert>
 #include "libcomp/geometry/polygon.hpp"
+#include "libcomp/geometry/intersect.hpp"
+#include "libcomp/geometry/crossing_points.hpp"
 
 namespace lc {
 
@@ -15,8 +18,7 @@ namespace lc {
 
 /**
  *  @brief 凸多角形かの判定
- *
- *  計算量は \f$ \mathcal{O}(|P|) \f$。
+ *    - 時間計算量: \f$ O(|P|) \f$
  *
  *  @param[in] p  判定する多角形
  *  @retval    true   pが凸多角形だった場合
@@ -43,10 +45,9 @@ inline bool is_convex(const Polygon &p){
 
 /**
  *  @brief 点群に対する凸包の計算
+ *    - 時間計算量: \f$ O(|P| \log{|P|}) \f$
  *
  *  Andrew's Monotone Chain による凸包の計算。
- *  計算量は \f$ \mathcal{O}(|P| \log{|P|}) \f$。
- *
  *  参考: http://www.prefield.com/algorithm/geometry/convex_hull.html
  *
  *  @param[in] points  点群
@@ -66,6 +67,44 @@ inline Polygon convex_hull(const std::vector<Point> &points){
 	}
 	ch.resize(k - 1);
 	return Polygon(ch.begin(), ch.end());
+}
+
+/**
+ *  @brief 凸多角形の直線による切断
+ *    - 時間計算量: \f$ O(|P|) \f$
+ *
+ *  凸多角形を直線lで切断し、その左側にあった領域を求める。
+ *
+ *  @param[in] p  切断する凸多角形
+ *  @param[in] l  切断に使用する直線
+ *  @return    pからlの左側にある部分のみを抽出した多角形
+ */
+inline Polygon convex_cut(const Polygon &p, const Line &l){
+	const int n = p.size();
+	std::vector<Point> ps;
+	for(int i = 0; i < n; ++i){
+		if(ccw(l.a, l.b, p[i]) != -1){ ps.push_back(p[i]); }
+		if(ccw(l.a, l.b, p[i]) * ccw(l.a, l.b, p[(i + 1) % n]) < 0){
+			ps.push_back(crossing_points(p.side(i), l)[0]);
+		}
+	}
+	return Polygon(ps.begin(), ps.end());
+}
+
+/**
+ *  @brief 凸多角形の共通領域
+ *    - 時間計算量: \f$ O(|P| |Q|) \f$
+ *
+ *  @todo  \f$ O(n + m) \f$ のアルゴリズムを実装する
+ *  @param[in] p  凸多角形1
+ *  @param[in] q  凸多角形2
+ *  @return    pとqの共通領域を表す多角形
+ */
+inline Polygon convex_and(const Polygon &p, const Polygon &q){
+	const int m = q.size();
+	Polygon ret = p;
+	for(int i = 0; i < m; ++i){ ret = convex_cut(ret, q.side(i).to_line()); }
+	return ret;
 }
 
 /**

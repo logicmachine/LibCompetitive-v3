@@ -105,7 +105,10 @@ private:
 			ofs << ",\"stroke_style\":\"" << shape.style.stroke_style << "\"";
 			ofs << ",\"stroke_width\":" << shape.style.stroke_width;
 		}
-		if(shape.kind == "circle" || shape.kind == "polygon"){
+		if(shape.kind == "point"){
+			ofs << ",\"fill_color\":\"" << shape.style.stroke_color << "\"";
+			ofs << ",\"fill_opacity\":" << shape.style.stroke_opacity;
+		}else if(shape.kind == "circle" || shape.kind == "polygon"){
 			ofs << ",\"fill_color\":\"" << shape.style.fill_color << "\"";
 			ofs << ",\"fill_opacity\":" << shape.style.fill_opacity;
 		}

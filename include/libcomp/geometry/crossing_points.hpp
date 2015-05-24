@@ -31,6 +31,32 @@ inline std::vector<Point> crossing_points(const Line &a, const Line &b){
 }
 
 /**
+ *  @brief 直線と線分の交点
+ *  @param[in] l  直線
+ *  @param[in] s  線分
+ *  @return    lとsの交点の座標。
+ *             sがlに含まれている場合はsの端点2つを返す。
+ */
+inline std::vector<Point> crossing_points(const Line &l, const Segment &s){
+	if(intersect(s.a, l) && intersect(s.b, l)){
+		return std::vector<Point>({ s.a, s.b });
+	}
+	std::vector<Point> ret = crossing_points(l, s.to_line());
+	if(intersect(ret[0], s)){ return ret; }
+	return std::vector<Point>();
+}
+/**
+ *  @brief 線分と直線の交点
+ *  @param[in] s  線分
+ *  @param[in] l  直線
+ *  @return    lとsの交点の座標。
+ *             sがlに含まれている場合はsの端点2つを返す。
+ */
+inline std::vector<Point> crossing_points(const Segment &s, const Line &l){
+	return crossing_points(l, s);
+}
+
+/**
  *  @brief 直線と円の交点
  *  @param[in] l  直線
  *  @param[in] c  円

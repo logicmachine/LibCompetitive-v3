@@ -55,7 +55,7 @@ auto ternary_search(T l, T r, Func f)
  *  @return    見つかったxの値
  */
 template <class T, class Func>
-auto ternary_search(T l, T r, Func f, int max_iter = 100)
+auto ternary_search(T l, T r, Func f, int max_iter = 200)
 	-> typename std::enable_if<std::is_floating_point<T>::value, T>::type
 {
 	for(int i = 0; i < max_iter; ++i){
