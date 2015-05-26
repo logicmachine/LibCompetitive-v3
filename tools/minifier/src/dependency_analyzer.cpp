@@ -285,6 +285,13 @@ class CallGraphConsumer : public clang::ASTConsumer {
 			//コンストラクタの定義を辿る
 			Traverse(ct_expr->getConstructor(), sm, depth + 1);
 		}
+		// ExplicitCastExpr
+		if(clang::isa<clang::ExplicitCastExpr>(stmt)){
+			const auto ec_expr =
+				clang::dyn_cast<clang::ExplicitCastExpr>(stmt);
+			// キャスト先の型の定義を辿る
+			Traverse(ec_expr->getTypeAsWritten(), sm, depth + 1);
+		}
 		// UnaryExprOrTypeTraitExpr
 		if(clang::isa<clang::UnaryExprOrTypeTraitExpr>(stmt)){
 			const auto uett_expr =
