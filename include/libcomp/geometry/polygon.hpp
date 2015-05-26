@@ -5,12 +5,14 @@
 #include <vector>
 #include "libcomp/geometry/point.hpp"
 #include "libcomp/geometry/segment.hpp"
+#include "libcomp/geometry/debug.hpp"
+#include "libcomp/misc/double_linked_list.hpp"
 
 namespace lc {
 
 /**
  *  @defgroup polygon Polygon
- *  @ingroup  geometry_primitive
+ *  @ingroup  geometry_primitives
  *  @{
  */
 
@@ -118,9 +120,9 @@ public:
 
 	/**
 	 *  @brief 多角形の面積
+	 *    - 時間計算量: \f$ O(n) \f$
 	 *
 	 *  多角形の面積を求める。
-	 *  計算量は \f$ \mathcal{O}(n) \f$。
 	 *
 	 *  @return 多角形の面積
 	 */
@@ -134,9 +136,9 @@ public:
 
 	/**
 	 *  @brief 点の内外判定
+	 *    - 時間計算量: \f$ O(n) \f$
 	 *
 	 *  点pが多角形の内部にあるかを調べる。
-	 *  計算量は \f$ \mathcal{O}(n) \f$。
 	 *
 	 *  @param[in] p   判定する点
 	 *  @retval    1   点pが多角形の内部にある
@@ -155,6 +157,40 @@ public:
 			if(cross(a, b) == 0.0 && dot(a, b) <= 0.0){ return 0; }
 		}
 		return result;
+	}
+
+	/**
+	 *  @brief 単純多角形の三角形分割
+	 *    - 時間計算量: \f$ O(n^2) \f$
+	 *
+	 *  @return 三角形分割の結果として得られた三角形の集合
+	 */
+	std::vector<Polygon> triangulate() const {
+		const int n = size();
+		const Polygon &self = *this;
+		std::vector<Polygon> triangles;
+		DoubleLinkedList dll(n, true);
+		for(int cur = 0, count = 0; count + 2 < n; cur = dll.next(cur)){
+			const int prev = dll.prev(cur), next = dll.next(cur);
+			if(ccw(self[prev], self[cur], self[next]) <= 0){ continue; }
+			bool accept = true;
+			for(int i = 0; accept && i < n; ++i){
+				if(i == prev || i == cur || i == next){ continue; }
+				const Point &p = self[i];
+				if(ccw(self[prev], self[cur],  p) < 0){ continue; }
+				if(ccw(self[cur],  self[next], p) < 0){ continue; }
+				if(ccw(self[next], self[prev], p) < 0){ continue; }
+				accept = false;
+			}
+			if(accept){
+				triangles.push_back(Polygon({
+					self[prev], self[cur], self[next]
+				}));
+				dll.erase(cur);
+				++count;
+			}
+		}
+		return triangles;
 	}
 };
 
