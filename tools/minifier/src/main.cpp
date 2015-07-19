@@ -11,7 +11,7 @@ static llvm::cl::opt<std::string> SourcePath(
 	llvm::cl::Required, llvm::cl::cat(MinifierCategory));
 static llvm::cl::list<std::string> Includes(
 	"include", llvm::cl::desc("Specify additional include directories"),
-	llvm::cl::Optional, llvm::cl::cat(MinifierCategory));
+	llvm::cl::ZeroOrMore, llvm::cl::cat(MinifierCategory));
 
 int main(int argc, const char **argv) {
 	llvm::StringMap<llvm::cl::Option *> Options;
