@@ -4,6 +4,7 @@
 #pragma once
 #include <vector>
 #include <stack>
+#include <utility>
 #include "libcomp/graph/edges.hpp"
 #include "libcomp/graph/adjacency_list.hpp"
 
