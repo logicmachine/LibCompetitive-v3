@@ -3,6 +3,7 @@
  */
 #pragma once
 #include <iostream>
+#include "libcomp/math/modulus_utility.hpp"
 
 namespace lc {
 
@@ -73,10 +74,14 @@ public:
 		return unsafe_construct(
 			static_cast<long long>(m_value) * x.m_value % MOD);
 	}
+	self_type operator/(const self_type &x) const {
+		return (*this) * unsafe_construct(modulus_inverse<MOD>(x.m_value));
+	}
 
 	self_type &operator+=(const self_type &x){ return (*this = *this + x); }
 	self_type &operator-=(const self_type &x){ return (*this = *this - x); }
 	self_type &operator*=(const self_type &x){ return (*this = *this * x); }
+	self_type &operator/=(const self_type &x){ return (*this = *this / x); }
 
 	self_type &operator++(){
 		if(++m_value >= MOD){ m_value = 0; }
