@@ -257,5 +257,4 @@ class Contest:
 		form_action = dom_form.attrib['action']
 		post_url = urllib.parse.urljoin(submit_response[1], form_action)
 		submit_response = self.__http_post(post_url, form_data, form_files)
-		print(submit_response)
 
