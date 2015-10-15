@@ -1,5 +1,5 @@
 /**
- *  @brief libcomp/string/name_table.hpp
+ *  @file libcomp/string/name_table.hpp
  */
 #pragma once
 #include <string>
